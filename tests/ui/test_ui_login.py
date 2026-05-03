@@ -1,26 +1,20 @@
-from tests.ui.pages.login_page import LoginPage
+import pytest
+import csv
 import allure
+from tests.ui.pages.login_page import LoginPage
 
-@allure.title("Invalid login with wrong credentials!")
-def test_login_invalid(driver):
+
+def load_test_data():
+    with open("tests/data/login_data.csv", newline='') as file:
+        reader = csv.DictReader(file)
+        return [(row["email"], row["password"]) for row in reader]
+
+
+@allure.title("Login test with multiple data inputs")
+@pytest.mark.parametrize("email,password", load_test_data())
+def test_login_data_driven(driver, email, password):
     login_page = LoginPage(driver)
     login_page.open()
-    login_page.login("invalid@test.com", "wrongpassword")
-
-    assert "login" in driver.current_url.lower()
-
-@allure.title("The fields are empty!")
-def test_login_empty_fields(driver):
-    login_page = LoginPage(driver)
-    login_page.open()
-    login_page.login("", "")
-
-    assert "login" in driver.current_url.lower()
-
-@allure.title("Invalid email format!")
-def test_login_invalid_email_format(driver):
-    login_page = LoginPage(driver)
-    login_page.open()
-    login_page.login("invalid-email", "password")
+    login_page.login(email, password)
 
     assert "login" in driver.current_url.lower()
