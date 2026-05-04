@@ -25,9 +25,10 @@ jobs:
         pip install -r requirements.txt
 
     - name: Install Allure
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y default-jre allure
+      uses: simple-elf/allure-report-action@v1.7
+      with:
+        allure_results: allure-results
+        allure_report: allure-report
 
     - name: Run tests
       run: pytest
